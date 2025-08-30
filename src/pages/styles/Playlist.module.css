@@ -1,0 +1,41 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.playlistItem {
+  background-color: #f9f9f9;
+  padding: 16px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  transition: box-shadow 0.2s ease;
+}
+
+.playlistItem:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.playlistLink {
+  font-size: 18px;
+  font-weight: 600;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.playlistLink:hover {
+  text-decoration: underline;
+}
+
+.playlistDescription {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+}
