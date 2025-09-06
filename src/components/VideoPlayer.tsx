@@ -1,4 +1,3 @@
-import { useState } from "react";
 import ReactPlayer from "react-player";
 
 interface VideoPlayerProps {
@@ -8,34 +7,25 @@ interface VideoPlayerProps {
   description?: string;
 }
 
-export default function VideoPlayer({ url, thumbnail, title, description }: VideoPlayerProps) {
-
-  const formatTime = (sec: number) => {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  };
-
+export default function VideoPlayer({
+  url,
+  thumbnail,
+  title,
+  description,
+}: VideoPlayerProps) {
   return (
     <div className="flex-1">
       {/* Video Player */}
       <div className="relative aspect-video bg-black rounded-xl overflow-hidden">
         <ReactPlayer
-          src={url}
+          src={url} // ✅ use url instead of src
           controls
           width="100%"
           height="100%"
-          light={thumbnail || "/default-thumbnail.png"}
-          onContextMenu={(e) => e.preventDefault()}
+          light={thumbnail || "/default-thumbnail.png"} // ✅ preview until play
+          onContextMenu={(e) => e.preventDefault()} // disable right-click
           className="rounded-lg"
         />
-
-        {/* Overlay Timer */}
-        {/* {duration > 0 && (
-          <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-            ⏳ {formatTime(duration - playedSeconds)} left
-          </span>
-        )} */}
       </div>
 
       {/* Video Info */}

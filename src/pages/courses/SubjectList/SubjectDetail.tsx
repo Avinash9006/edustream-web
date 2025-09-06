@@ -4,21 +4,31 @@ import axios from "axios";
 import { endpoints } from "../../../api/endpoints";
 
 export default function SubjectDetail() {
-  const { courseId, id } = useParams<{ courseId: string; id: string }>();
+  const { courseId, subjectId } = useParams<{ courseId: string; subjectId: string }>();
   const [subject, setSubject] = useState<any>(null);
+  const [chapters, setChapters] = useState<any[]>([]);
   const navigate = useNavigate();
-
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
+    // Fetch subject details
     axios
-      .get(`${endpoints.courses}/${courseId}/subjects/${id}`, {
+      .get(`${endpoints.courses}/${courseId}/subjects/${subjectId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setSubject(res.data))
       .catch((err) => console.error("Error fetching subject", err));
-  }, [courseId, id]);
+
+    // Fetch chapters separately
+    axios
+      .get(`${endpoints.courses}/${courseId}/subjects/${subjectId}/chapters`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setChapters(res.data.chapters))
+      .catch((err) => console.error("Error fetching chapters", err));
+  }, [courseId, subjectId]);
 
   if (!subject) return <p className="text-center py-6">Loading subject...</p>;
 
@@ -33,8 +43,8 @@ export default function SubjectDetail() {
         {(user.role === "teacher" || user.role === "admin") && (
           <button
             onClick={() =>
-              navigate(`/courses/${courseId}/subjects/${id}/add-chapter`, {
-                state: { courseId, subjectId: id },
+              navigate(`/courses/${courseId}/subjects/${subjectId}/add-chapter`, {
+                state: { courseId, subjectId },
               })
             }
             className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
@@ -46,16 +56,14 @@ export default function SubjectDetail() {
 
       {/* Chapters grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {subject.chapters?.map((chapter: any) => (
+        {chapters.map((chapter) => (
           <Link
-            to={`/video/${chapter._id}`}
+            to={`/courses/${courseId}/subjects/${subjectId}/chapterVideos/${chapter._id}`}
             key={chapter._id}
             className="border rounded-xl shadow hover:shadow-lg transition bg-white p-4"
           >
             <h3 className="text-lg font-bold">{chapter.title}</h3>
-            <p className="text-sm text-gray-600 line-clamp-2">
-              {chapter.description}
-            </p>
+            <p className="text-sm text-gray-600 line-clamp-2">{chapter.description}</p>
           </Link>
         ))}
       </div>

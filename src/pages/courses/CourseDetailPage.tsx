@@ -4,17 +4,16 @@ import axios from "axios";
 import { endpoints } from "../../api/endpoints";
 
 export default function CourseDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { courseId } = useParams<{ courseId: string }>();
   const [course, setCourse] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
   const [newSubject, setNewSubject] = useState({ title: "", description: "", image: "" });
-
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const fetchCourse = () => {
     const token = localStorage.getItem("token");
     axios
-      .get(`${endpoints.courses}/${id}`, {
+      .get(`${endpoints.courses}/${courseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setCourse(res.data))
@@ -23,7 +22,7 @@ export default function CourseDetail() {
 
   useEffect(() => {
     fetchCourse();
-  }, [id]);
+  }, [courseId]);
 
   const handleAddSubject = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +30,7 @@ export default function CourseDetail() {
 
     axios
       .post(
-        `${endpoints.courses}/${id}/subjects`,
+        `${endpoints.courses}/${courseId}/subjects`,
         newSubject,
         { headers: { Authorization: `Bearer ${token}` } }
       )

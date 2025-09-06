@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { privateRoutes } from "./routes";
 import Login from "./pages/users/Login";
 import Register from "./pages/users/Register";
+import RegisterTenant from "./pages/users/tenantRegistration";
 
 export default function App() {
   return (
@@ -10,6 +11,7 @@ export default function App() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/register-tenant" element={<RegisterTenant />} />
 
         {/* Private routes */}
         {privateRoutes.map((route, idx) => (
