@@ -1,132 +1,96 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { endpoints } from "../../api/endpoints";
 
 export default function Profile() {
   const [user, setUser] = useState<any>({});
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [activeTab, setActiveTab] = useState<"details" | "achievements">("details");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     axios
       .get(endpoints.profile, { headers: { Authorization: `Bearer ${token}` } })
-      .then(res => {
-        setUser(res.data);
-        setName(res.data.name);
-        setEmail(res.data.email);
-      })
-      .catch(err => console.error(err));
+      .then((res) => setUser(res.data.user))
+      .catch(console.error);
   }, []);
 
-  const updateProfile = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const res = await axios.put(
-        endpoints.profile,
-        { name, email },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setUser(res.data.user);
-      alert("Profile updated");
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Update failed");
-    }
-  };
-
-  const changePassword = async () => {
-    if (newPassword !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-    try {
-      await axios.put(
-        `${endpoints.profile}/change-password`,
-        { currentPassword, newPassword },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert("Password updated successfully");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Password change failed");
-    }
-  };
-
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-      <h2 className="text-2xl font-bold">Profile</h2>
+    <div className="max-w-4xl mx-auto p-6">
+      {/* Top profile card */}
+      <div className="flex items-center gap-6 bg-white p-6 rounded-lg shadow-md">
+        {/* Profile image/logo */}
+        <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-purple-500">
+          <img
+            src={user.profileImage || "/default-profile.png"}
+            alt={user.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-      {/* Profile Info */}
-      <div className="space-y-4">
-        <div>
-          <label className="block font-semibold mb-1">Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        {/* Basic info */}
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold">{user.name}</h2>
+          <p className="text-gray-600">{user.designation || "Student"}</p>
+          <p className="text-gray-500 text-sm">{user.email}</p>
+          <p className="text-gray-500 text-sm">Role: {user.role}</p>
         </div>
-        <div>
-          <label className="block font-semibold mb-1">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <button
-          onClick={updateProfile}
-          className="bg-black-500 text-white px-4 py-2 rounded-md hover:bg-black-600 transition"
-        >
-          Update Profile
+
+        {/* Edit button */}
+        <button className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+          Edit
         </button>
       </div>
 
-      {/* Change Password */}
-      <div className="space-y-4 border-t pt-4">
-        <h3 className="text-xl font-semibold">Change Password</h3>
-        <div>
-          <label className="block font-semibold mb-1">Current Password</label>
-          <input
-            type="password"
-            value={currentPassword}
-            onChange={e => setCurrentPassword(e.target.value)}
-            className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block font-semibold mb-1">New Password</label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={e => setNewPassword(e.target.value)}
-            className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block font-semibold mb-1">Confirm New Password</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={e => setConfirmPassword(e.target.value)}
-            className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <button
-          onClick={changePassword}
-          className="bg-black-500 text-white px-4 py-2 rounded-md hover:bg-black-600 transition"
-        >
-          Change Password
-        </button>
+      {/* Tabs */}
+<div className="mt-6 border-b border-gray-200">
+  <ul className="flex space-x-6">
+    <li
+      onClick={() => setActiveTab("details")}
+      className={`cursor-pointer py-2 px-3 font-medium ${
+        activeTab === "details"
+          ? "border-b-2 border-purple-600 text-purple-600"
+          : "text-gray-500"
+      }`}
+    >
+      Details
+    </li>
+    <li
+      onClick={() => setActiveTab("achievements")}
+      className={`cursor-pointer py-2 px-3 font-medium ${
+        activeTab === "achievements"
+          ? "border-b-2 border-purple-600 text-purple-600"
+          : "text-gray-500"
+      }`}
+    >
+      Achievements
+    </li>
+  </ul>
+</div>
+
+
+      {/* Tab content */}
+      <div className="mt-4 bg-white p-6 rounded-lg shadow-md">
+        {activeTab === "details" && (
+          <div>
+            <p><strong>Name:</strong> {user.name}</p>
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Designation:</strong> {user.designation || "N/A"}</p>
+            <p><strong>Role:</strong> {user.role}</p>
+          </div>
+        )}
+        {activeTab === "achievements" && (
+          <div>
+            {user.achievements?.length > 0 ? (
+              <ul className="list-disc pl-5 space-y-2">
+                {user.achievements.map((ach: string, idx: number) => (
+                  <li key={idx}>{ach}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-500">No achievements yet.</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

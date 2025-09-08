@@ -60,7 +60,6 @@ export default function CoursesPage() {
                   </span>
                 )}
               </div>
-
               <p className="text-sm text-gray-700 mb-3">{course.description}</p>
             </div>
           </Link>

@@ -52,7 +52,7 @@ export default function VideoStandAlone() {
   return (
     <div className="px-6 py-6 max-w-7xl mx-auto">
       {videos.length > 0 ? (
-        <h2 className="text-3xl font-bold mb-6">Standalone Videos</h2>
+        <h2 className="text-3xl font-bold mb-6">Videos</h2>
       ) : (
         <p>No standalone videos available</p>
       )}
