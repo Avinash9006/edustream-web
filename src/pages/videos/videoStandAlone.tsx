@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { endpoints } from "../../api/endpoints";
+import { getYouTubeThumbnail } from "../../utils";
 
 export default function VideoStandAlone() {
   const [videos, setVideos] = useState<any[]>([]);
@@ -32,18 +33,12 @@ export default function VideoStandAlone() {
     fetchVideos();
   }, [token]);
 
-  const getYouTubeThumbnail = (url: string) => {
-    const match = url.match(/(?:youtube\.com.*v=|youtu\.be\/)([^&]+)/);
-    return match
-      ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`
-      : null;
-  };
-
   if (loading) return <p className="p-6">Loading videos...</p>;
+
 
   return (
     <div className="px-6 py-6 max-w-7xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6">Standalone Videos</h2>
+      {videos.length > 0 ? <h2 className="text-3xl font-bold mb-6">Videos</h2> : <p>No videos available</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {videos.map((video) => (

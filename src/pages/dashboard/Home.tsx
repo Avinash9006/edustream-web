@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { endpoints } from "../../api/endpoints";
-import Roles from "../../constants";
+import { ROLES } from "../../constants";
 import CourseCard from "../courses/CourseCard";
 
 interface Course {
@@ -55,9 +55,9 @@ export default function Home() {
   if (loading) return <div className="text-center py-20 text-gray-500">Loading...</div>;
   if (error) return <div className="text-center py-20 text-red-500">{error}</div>;
 
-  const isAdmin = user?.role === Roles.ADMIN;
-  const isTeacher = user?.role === Roles.TEACHER;
-  const isAnonymous = user?.role === Roles.ANONYMOUS;
+  const isAdmin = user?.role === ROLES.ADMIN;
+  const isTeacher = user?.role === ROLES.TEACHER;
+  const isAnonymous = user?.role === ROLES.ANONYMOUS;
 
   const canAccessCourse = ["admin", "teacher", "student"].includes(user?.role || "anonymous");
 

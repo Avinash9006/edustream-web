@@ -3,8 +3,7 @@ import PrivateRoute from "../routes/PrivateRoute";
 import PrivateLayout from "../layouts/PrivateLayout";
 
 import Home from "../pages/dashboard/Home";
-import UploadVideo from "../pages/teacher/UploadVideo";
-import Playlist from "../pages/Playlist";
+import CoursesPage from "../pages/CoursesPage";
 import VideoDetail from "../pages/videos/VideoDetail";
 import CourseDetail from "../pages/courses/CourseDetailPage";
 import Profile from "../pages/users/Profile";
@@ -15,6 +14,7 @@ import CreateSubject from "../pages/teacher/CreateSubject";
 import CreateChapter from "../pages/teacher/CreateChapter";
 import VideoStandAlone from "../pages/videos/videoStandAlone";
 import ChapterList from "../pages/courses/SubjectList/ChapterList/ChapterList";
+import Upload from "../pages/teacher/Upload";
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -32,7 +32,7 @@ export const privateRoutes: RouteObject[] = [
     element: (
       <PrivateRoute>
         <PrivateLayout>
-          <Playlist />
+          <CoursesPage />
         </PrivateLayout>
       </PrivateRoute>
     ),
@@ -52,7 +52,7 @@ export const privateRoutes: RouteObject[] = [
     element: (
       <PrivateRoute>
         <PrivateLayout>
-          <UploadVideo />
+          <Upload />
         </PrivateLayout>
       </PrivateRoute>
     ),

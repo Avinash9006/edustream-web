@@ -63,7 +63,6 @@ export default function SubjectDetail() {
             className="border rounded-xl shadow hover:shadow-lg transition bg-white p-4"
           >
             <h3 className="text-lg font-bold">{chapter.title}</h3>
-            <p className="text-sm text-gray-600 line-clamp-2">{chapter.description}</p>
           </Link>
         ))}
       </div>

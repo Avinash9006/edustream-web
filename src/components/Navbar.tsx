@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import Roles from "../constants";
+import { ROLES } from "../constants";
 
 export default function Navbar() {
   const [role, setRole] = useState<string | null>(null);
@@ -59,13 +59,20 @@ export default function Navbar() {
 
           {/* Desktop Links */}
           <div className="hidden md:flex md:items-center md:space-x-4 text-white">
+            <Link
+            to="/courses"
+            onClick={() => setMenuOpen(false)}
+            className="block px-3 py-2 rounded-md hover:bg-gray-800"
+          >
+            Courses
+          </Link>
              <Link
               to="/videos"
               className="hover:text-gray-300 px-3 py-2 rounded-md font-medium"
             >
               Video
             </Link>
-            {(role === Roles.TEACHER || role === Roles.ADMIN) && (
+            {(role === ROLES.TEACHER || role === ROLES.ADMIN) && (
               <>
                 <Link
                   to="/upload"
@@ -76,7 +83,7 @@ export default function Navbar() {
               </>
             )}
 
-            {role === Roles.ADMIN && (
+            {role === ROLES.ADMIN && (
               <Link
                 to="/admin"
                 className="hover:text-gray-300 px-3 py-2 rounded-md font-medium"
@@ -130,14 +137,14 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden px-2 pt-2 pb-3 space-y-1 bg-black text-white">
           <Link
-            to="/playlist"
+            to="/courses"
             onClick={() => setMenuOpen(false)}
             className="block px-3 py-2 rounded-md hover:bg-gray-800"
           >
             Courses
           </Link>
 
-          {(role === Roles.TEACHER || role === Roles.ADMIN) && (
+          {(role === ROLES.TEACHER || role === ROLES.ADMIN) && (
             <>
               <Link
                 to="/upload"
@@ -156,7 +163,7 @@ export default function Navbar() {
             </>
           )}
 
-          {role === Roles.ADMIN && (
+          {role === ROLES.ADMIN && (
             <Link
               to="/admin"
               onClick={() => setMenuOpen(false)}
