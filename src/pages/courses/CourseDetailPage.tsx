@@ -7,11 +7,13 @@ export default function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>();
   const [course, setCourse] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editingSubject, setEditingSubject] = useState<any>(null);
   const [newSubject, setNewSubject] = useState({ title: "", description: "", image: "" });
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
+  const token = localStorage.getItem("token");
+
   const fetchCourse = () => {
-    const token = localStorage.getItem("token");
     axios
       .get(`${endpoints.courses}/${courseId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -26,14 +28,10 @@ export default function CourseDetail() {
 
   const handleAddSubject = (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
-
     axios
-      .post(
-        `${endpoints.courses}/${courseId}/subjects`,
-        newSubject,
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
+      .post(`${endpoints.courses}/${courseId}/subjects`, newSubject, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then(() => {
         setNewSubject({ title: "", description: "", image: "" });
         setShowForm(false);
@@ -42,6 +40,40 @@ export default function CourseDetail() {
       .catch((err) => {
         console.error("Error adding subject", err);
         alert("Failed to add subject");
+      });
+  };
+
+  const handleUpdateSubject = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSubject) return;
+
+    axios
+      .put(
+        `${endpoints.courses}/${courseId}/subjects/${editingSubject._id}`,
+        editingSubject,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      .then(() => {
+        setEditingSubject(null);
+        fetchCourse();
+      })
+      .catch((err) => {
+        console.error("Error updating subject", err);
+        alert("Failed to update subject");
+      });
+  };
+
+  const handleDeleteSubject = (subjectId: string) => {
+    if (!window.confirm("Are you sure you want to delete this subject?")) return;
+
+    axios
+      .delete(`${endpoints.courses}/${courseId}/subjects/${subjectId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(() => fetchCourse())
+      .catch((err) => {
+        console.error("Error deleting subject", err);
+        alert("Failed to delete subject");
       });
   };
 
@@ -112,16 +144,66 @@ export default function CourseDetail() {
         </form>
       )}
 
+      {/* Edit Subject Form */}
+      {editingSubject && (
+        <form
+          onSubmit={handleUpdateSubject}
+          className="mb-6 bg-yellow-50 border p-4 rounded-lg space-y-3"
+        >
+          <input
+            type="text"
+            placeholder="Subject Title"
+            value={editingSubject.title}
+            onChange={(e) => setEditingSubject({ ...editingSubject, title: e.target.value })}
+            className="w-full px-3 py-2 border rounded"
+            required
+          />
+          <textarea
+            placeholder="Subject Description"
+            value={editingSubject.description}
+            onChange={(e) =>
+              setEditingSubject({ ...editingSubject, description: e.target.value })
+            }
+            className="w-full px-3 py-2 border rounded"
+            rows={3}
+          />
+          <input
+            type="text"
+            placeholder="Image URL"
+            value={editingSubject.image}
+            onChange={(e) => setEditingSubject({ ...editingSubject, image: e.target.value })}
+            className="w-full px-3 py-2 border rounded"
+          />
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              className="px-4 py-2 bg-yellow-600 text-white rounded-lg shadow hover:bg-yellow-700"
+            >
+              Update
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditingSubject(null)}
+              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+
       {/* Subjects Grid */}
       {course.subjects?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {course.subjects.map((subject: any) => (
-            <Link
-              to={`/courses/${course._id}/subjects/${subject._id}`}
+            <div
               key={subject._id}
-              className="flex flex-col border rounded-xl shadow hover:shadow-lg transition bg-white overflow-hidden"
+              className="flex flex-col border rounded-xl shadow bg-white overflow-hidden"
             >
-              <div className="h-40 bg-gray-100 flex items-center justify-center">
+              <Link
+                to={`/courses/${course._id}/subjects/${subject._id}`}
+                className="h-40 bg-gray-100 flex items-center justify-center"
+              >
                 {subject.image ? (
                   <img
                     src={subject.image}
@@ -133,22 +215,35 @@ export default function CourseDetail() {
                     {subject.title}
                   </span>
                 )}
-              </div>
+              </Link>
               <div className="p-4 flex-1 flex flex-col justify-between">
-                <h3 className="text-lg font-bold text-gray-900">
-                  {subject.title}
-                </h3>
+                <h3 className="text-lg font-bold text-gray-900">{subject.title}</h3>
                 <p className="text-sm text-gray-600 mt-2 line-clamp-2">
                   {subject.description || "No description available."}
                 </p>
+
+                {(user.role === "teacher" || user.role === "admin") && (
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      onClick={() => setEditingSubject(subject)}
+                      className="px-2 py-1 bg-yellow-500 text-white rounded text-sm"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteSubject(subject._id)}
+                      className="px-2 py-1 bg-red-600 text-white rounded text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       ) : (
-        <p className="text-gray-500 italic mt-4">
-          No subjects available for this course.
-        </p>
+        <p className="text-gray-500 italic mt-4">No subjects available for this course.</p>
       )}
     </div>
   );
