@@ -6,7 +6,7 @@ import Home from "../pages/dashboard/Home";
 import CoursesPage from "../pages/CoursesPage";
 import VideoDetail from "../pages/videos/VideoDetail";
 import CourseDetail from "../pages/courses/CourseDetailPage";
-import Profile from "../pages/users/Profile";
+import Profile from "../pages/users/profile/Profile";
 import Admin from "../pages/users/Admin";
 import SubjectDetail from "../pages/courses/SubjectList/SubjectDetail";
 import CreateCourse from "../pages/teacher/CreateCourse";
